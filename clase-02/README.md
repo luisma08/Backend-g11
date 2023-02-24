@@ -44,3 +44,10 @@ pip freeze
 ```
 pip freeze > requirements.txt
 ```
+
+## Instalar las librerias que estan listados en nuestro `requirements.txt`
+
+```
+pip install -r requirements.txt
+```
+
