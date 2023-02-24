@@ -17,3 +17,16 @@ source venv\Scripts\activate
 deactivate
 
 
+# Flask
+
+## Instalar flask
+
+pip install Flask
+
+## Verificamos que flask se haya instalado
+
+pip freeze
+
+## Listar las librerias en el archivo `requirements.txt`
+
+pip freeze > requirements.txt
