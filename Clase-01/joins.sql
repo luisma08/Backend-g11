@@ -42,3 +42,9 @@ ON alumnos.id = alumnos_cursos.alumno_id
 INNER JOIN cursos
 ON alumnos_cursos.curso_id = cursos.id;
 
+SELECT alumnos.nombre FROM
+alumnos INNER JOIN alumnos_cursos
+ON alumnos.id = alumnos_cursos.alumno_id
+INNER JOIN cursos
+ON alumnos_cursos.curso_id = cursos.id
+WHERE cursos.habilitado = TRUE AND alumnos.matriculado = TRUE;
