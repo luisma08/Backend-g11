@@ -87,12 +87,12 @@ def gestion_alumnos(id):
                 'message': 'El alumno no existe'
             }
     elif request.method == 'PUT':
-        # Recibir la informacion del body y el id por la url y modificar la data del alumno, primero validar si el alumno existe no hacer modificacion, 
+        #TODO: Recibir la informacion del body y el id por la url y modificar la data del alumno, primero validar si el alumno existe no hacer modificacion, 
         # si no existe no hacer ninguna modificacion, si existe hacer la modificacion
         pass
 
     elif request.method == 'DELETE':
-        # Recibir el id por la url y validar si el alumno existe, si existe, eliminarlo (hacer un delete) caso contrario indicar que el alumno no existe
+        #TODO: Recibir el id por la url y validar si el alumno existe, si existe, eliminarlo (hacer un delete) caso contrario indicar que el alumno no existe
         pass
 
 if __name__ == '__main__':

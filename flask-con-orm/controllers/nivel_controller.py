@@ -2,6 +2,7 @@ from flask_restful import Resource, request
 from sqlalchemy.orm import Query
 from base_de_datos import conexion
 from models.nivel_model import Nivel
+from dtos.nivel_dto import NivelDto
 
 class NivelController(Resource):
     # GET, POST, PUT
@@ -9,15 +10,59 @@ class NivelController(Resource):
         query: Query = conexion.session.query(Nivel)
         # SELECT * FROM niveles;
         resultado = query.all()
-        print(resultado)
-        niveles = []
+        #print(resultado)
 
-        for nivel in resultado:
-            niveles.append ({
-                'id': nivel.id,
-                'numero': nivel.numero,
-                'descripcion': nivel.descripcion
-            })
+        dto = NivelDto()
+
+        niveles = dto.dump(resultado, many=True)
+
+        # niveles = []
+
+        # for nivel in resultado:
+        #     niveles.append ({
+        #         'id': nivel.id,
+        #         'numero': nivel.numero,
+        #         'descripcion': nivel.descripcion
+        #     })
         return {
             'content': niveles
         }
+    
+    def post(self):
+        data = request.json
+        dto = NivelDto()
+        # load >  aca le pasamos un diccionario y lo convertira y validara si toda la informacion es correcta, si no lo es, 
+        # emitira un error y si la informacion esta bien, entonces devolvera un diccionario con la data correcta
+        try:
+            data_validada = dto.load(data)
+            print(data_validada)
+
+            nuevo_nivel = Nivel(numero=data_validada.get('numero'), descripcion=data_validada.get('descripcion'))
+            # con el metodo add indicamos que queremos guardar ese nuevo registro
+            conexion.session.add(nuevo_nivel)
+            # Indicamos a la base de datos que guarde los cambios (insert) de manera permanente
+            conexion.session.commit()
+            return {
+                'message': 'NIVEL CREADO EXITOSAMENTE'
+            }, 201
+
+        except Exception as error:
+            return {
+                'message': 'ERRR AL CREAR EL NIVEL',
+                'content': error.args
+            }
+        
+class UnNivelController(Resource):
+    def get(self, id):
+        query: Query = conexion.session.query(Nivel)
+        nivel_encontrado = query.filter_by(id=id).first()
+        
+        dto = NivelDto()
+        resultado = dto.dump(nivel_encontrado)
+
+        return {
+            'content': resultado
+        }
+
+# TODO: Implementar para crear y listar a todos los maestros, utilizar o crear los DTOS correspondientes de los maestros 
+# TODO: Implementar si no existe ese nivel, retornar un message diciendo que el nivel no existe
