@@ -119,7 +119,19 @@ def gestion_alumnos(id):
 
     elif request.method == 'DELETE':
         #TODO: Recibir el id por la url y validar si el alumno existe, si existe, eliminarlo (hacer un delete) caso contrario indicar que el alumno no existe
-        pass
+        alumno = verificar_alumno(id)
+        if alumno:
+            cursor = conexion.cursor()
+            cursor.execute("DELETE FROM alumnos WHERE id = %s", [id])
+            conexion.commit()
+
+            return {
+                'message': 'Alumno eliminado'
+            }
+        else:
+            return {
+                'message': 'No existe el alumno'
+            }
 
 if __name__ == '__main__':
     # debug indica que cada vez que guardemos un archivo del proyecto el servidor se reinicie automaticamente
