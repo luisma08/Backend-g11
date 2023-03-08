@@ -58,16 +58,22 @@ def alumnos():
         return {
             'message': 'Alumno ingresado exitosamente'
         }
-    
+
+def verificar_alumno(id):
+    # Creo un cursor que es el responsable de hacer lecturas y escrituras a la db
+    cursor = conexion.cursor()
+
+    # Ejecuto la query
+    cursor.execute('SELECT * FROM alumnos WHERE id = %s', (id,))
+    resultado = cursor.fetchone()
+
+    #cursor.close()
+    return resultado
+
 @app.route('/alumno/<id>', methods = ['GET', 'PUT', 'DELETE'])
 def gestion_alumnos(id):
     if request.method == 'GET':
-        # Creo un cursor que es el responsable de hacer lecturas y escrituras a la db
-        cursor = conexion.cursor()
-
-        # Ejecuto la query
-        cursor.execute('SELECT * FROM alumnos WHERE id = %s', (id,))
-        alumno = cursor.fetchone()
+        alumno = verificar_alumno(id)
 
         if alumno:
             # Significa que el alumno existe
@@ -89,7 +95,27 @@ def gestion_alumnos(id):
     elif request.method == 'PUT':
         #TODO: Recibir la informacion del body y el id por la url y modificar la data del alumno, primero validar si el alumno existe no hacer modificacion, 
         # si no existe no hacer ninguna modificacion, si existe hacer la modificacion
-        pass
+        alumno = verificar_alumno(id)
+        if alumno:
+            data = request.get_json()
+            cursor = conexion.cursor()
+            cursor.execute("UPDATE alumnos SET nombre= %s, apellido= %s, sexo= %s, fecha_creacion= CURRENT_TIMESTAMP, matriculado=%s WHERE id=%s", [
+                data.get('nombre'),
+                data.get('apellido'),
+                data.get('sexo'),
+                data.get('matriculado'),
+                alumno[0]
+            ])
+            conexion.commit()
+            #cursor.close()
+
+            return {
+                'message': ' Datos del alumno actualizados'
+            }
+        else:
+            return{
+                'message': 'No existe el alumno'
+            }
 
     elif request.method == 'DELETE':
         #TODO: Recibir el id por la url y validar si el alumno existe, si existe, eliminarlo (hacer un delete) caso contrario indicar que el alumno no existe
