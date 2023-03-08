@@ -60,9 +60,15 @@ class UnNivelController(Resource):
         dto = NivelDto()
         resultado = dto.dump(nivel_encontrado)
 
-        return {
-            'content': resultado
-        }
+        if resultado:
+
+            return {
+                'content': resultado
+            }
+        else:
+            return {
+                'message': 'El nivel no existe'
+            }
 
 # TODO: Implementar para crear y listar a todos los maestros, utilizar o crear los DTOS correspondientes de los maestros 
 # TODO: Implementar si no existe ese nivel, retornar un message diciendo que el nivel no existe
