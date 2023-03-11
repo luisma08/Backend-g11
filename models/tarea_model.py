@@ -16,6 +16,6 @@ class Tarea(conexion.Model):
     fechaVencimiento = Column(type_=types.DateTime, name='fecha_vencimiento')
     estado = Column(type_=types.Enum(EstadoTareaEnum), default=EstadoTareaEnum.PENDIENTE)
 
-    usuarioId = Column(ForeignKey(column='usuario.id'), type_=types.Integer, nullable=False)
+    usuarioId = Column(ForeignKey(column='usuario.id'), type_=types.Integer, nullable=False, name='usuario_id')
 
     __tablename__ = 'tareas'

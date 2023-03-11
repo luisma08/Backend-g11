@@ -9,7 +9,7 @@ from bd import conexion
 class UsuariosController(Resource):
     def post(self):
         data = request.json
-        dto = UsuarioDto
+        dto = UsuarioDto()
         try:
             data_validada = dto.load(data)
             # Generar el hash de la password
