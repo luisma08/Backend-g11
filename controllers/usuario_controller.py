@@ -1,8 +1,9 @@
 from flask_restful import Resource, request
-#from sqlalchemy.orm import Query
-from bcrypt import hashpw, gensalt
+from sqlalchemy.orm import Query
+from bcrypt import hashpw, gensalt, checkpw
+from flask_jwt_extended import create_access_token
 #Archivos locacles
-from dtos.usuario_dto import UsuarioDto
+from dtos.usuario_dto import UsuarioDto, LoginDto
 from models.usuario_model import Usuario
 from bd import conexion
 
@@ -35,5 +36,44 @@ class UsuariosController(Resource):
         except Exception as error:
             return {
                 'message': 'Error al ingresar el usuario',
+                'content': error.args
+            }
+        
+class LoginController(Resource):
+    def post(self):
+        data = request.json
+        dto = LoginDto()
+        try:
+            data_validada = dto.load(data)
+            # Buscar el usuario por ese correo
+            # SELECT * FROM usuarios WHERE corre = '.....'
+            query: Query = conexion.session.query(Usuario)
+            usuario_encontrado: Usuario | None = query.filter_by(correo = data_validada.get('correo')).first()
+            if not usuario_encontrado:
+                return{
+                    'message': 'El usuario no existe'
+                }
+            
+            # Ahora valido si la contraseña es la correcta
+            # Lo convierto a bytes porque asi trabaja la funcion checkpw
+            hashed_password = bytes(usuario_encontrado.password,'utf-8')
+            password = bytes(data_validada.get('password'), 'utf-8')
+
+            resultado = checkpw(password, hashed_password)
+
+            if resultado:
+                # identity > sirve para indicar a que usuario le pertenece este JWT o token
+                token = create_access_token(identity = usuario_encontrado.id)
+                return{
+                    'content': token
+                }
+            else:
+                return{
+                    'message': 'Credenciales incorrectas'
+                }
+
+        except Exception as error:
+            return {
+                'message': 'Error al hacer el login',
                 'content': error.args
             }
