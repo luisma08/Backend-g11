@@ -7,7 +7,10 @@ from bd import conexion
 
 class TareasController(Resource):
     def post(self):
-        pass
+        usuario_id = get_jwt_identity()
+        data = request.json
+        
+        
 
     def get(self):
         pass
