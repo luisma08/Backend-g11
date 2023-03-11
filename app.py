@@ -7,6 +7,7 @@ from datetime import timedelta
 #Archivos locales
 from bd import conexion
 from controllers.usuario_controller import UsuariosController, LoginController, PerfilController
+from controllers.tarea_controller import TareasController
 
 
 app = Flask(__name__)
@@ -32,6 +33,8 @@ Flask_api.add_resource(UsuariosController, '/registro')
 Flask_api.add_resource(LoginController, '/login')
 
 Flask_api.add_resource(PerfilController, '/perfil')
+
+Flask_api.add_resource(TareasController, '/tareas')
 
 if __name__ == '__main__':
     app.run(debug=True)
