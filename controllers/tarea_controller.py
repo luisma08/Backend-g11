@@ -1,6 +1,7 @@
 # librerias
 from flask_restful import Resource, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.orm import Query
 # archivos locales
 from models.tarea_model import Tarea
 from bd import conexion
@@ -27,10 +28,26 @@ class TareasController(Resource):
                 'message': 'Error al crear la tarea',
                 'content': error.args
             }
-
+        
+    @jwt_required()
     def get(self):
         # TODO: devolver todas las tareas del usuario
-        pass
+        usuario_id = get_jwt_identity()
+        query: Query = conexion.session.query(Tarea)
+        print('id de usuario para el get')
+        print(usuario_id)
+
+        tareas_usuario_activado: Tarea = query.filter_by(usuarioId = usuario_id).all()
+        print(tareas_usuario_activado)
+
+        dto = TareaDto()
+
+        data = dto.dump(tareas_usuario_activado, many=True)
+
+        return{
+            'content': data
+        }
+        
 class TareaController(Resource):
     @jwt_required()
     def get(self):
