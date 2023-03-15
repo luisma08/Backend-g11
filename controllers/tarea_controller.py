@@ -65,7 +65,10 @@ class TareaController(Resource):
         print(fec_ven_str)
 
         query: Query = conexion.session.query(Tarea)
-        filtro_tarea: Tarea = query.filter(and_(Tarea.usuarioId == usuario_id, Tarea.estado == EstadoTareaEnum(estado), Tarea.fechaVencimiento == fecha_vencimiento, Tarea.nombre.like(nombre_str))).all()
+        filtro_tarea: Tarea = query.filter(and_(Tarea.usuarioId == usuario_id, 
+                                                Tarea.estado == EstadoTareaEnum(estado), 
+                                                Tarea.fechaVencimiento == fecha_vencimiento, 
+                                                Tarea.nombre.like(nombre_str))).all()
 
         print(filtro_tarea)
 
@@ -76,9 +79,3 @@ class TareaController(Resource):
         return{
             'content': data
         }
-        
-        # return{
-        #     "nombre": nombre,
-        #     "estado": estado,
-        #     "fecha_vencimiento": fecha_vencimiento
-        # }
