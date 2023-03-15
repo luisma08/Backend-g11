@@ -1,5 +1,5 @@
 #Librerias
-from flask import Flask
+from flask import Flask, request
 from flask_migrate import Migrate
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
@@ -7,7 +7,7 @@ from datetime import timedelta
 #Archivos locales
 from bd import conexion
 from controllers.usuario_controller import UsuariosController, LoginController, PerfilController
-from controllers.tarea_controller import TareasController
+from controllers.tarea_controller import TareasController, TareaController
 
 
 app = Flask(__name__)
@@ -35,6 +35,8 @@ Flask_api.add_resource(LoginController, '/login')
 Flask_api.add_resource(PerfilController, '/perfil')
 
 Flask_api.add_resource(TareasController, '/tareas')
+
+Flask_api.add_resource(TareaController, '/tarea', endpoint='tarea')
 
 if __name__ == '__main__':
     app.run(debug=True)

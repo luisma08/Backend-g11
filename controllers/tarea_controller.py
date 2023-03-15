@@ -1,9 +1,11 @@
 # librerias
 from flask_restful import Resource, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy import and_, or_, Enum
 from sqlalchemy.orm import Query
+from datetime import datetime
 # archivos locales
-from models.tarea_model import Tarea
+from models.tarea_model import Tarea, EstadoTareaEnum
 from bd import conexion
 from dtos.tarea_dto import TareaDto
 
@@ -51,4 +53,32 @@ class TareasController(Resource):
 class TareaController(Resource):
     @jwt_required()
     def get(self):
-        pass
+        usuario_id = get_jwt_identity()
+        print(usuario_id)
+        # Obtengo los parametros de la url
+        nombre = request.args.get('nombre')
+        estado = request.args.get('estado')
+        fecha_vencimiento = request.args.get('fecha_vencimiento')
+
+        nombre_str = "%{}%".format(nombre)
+        fec_ven_str = "%{}%".format(fecha_vencimiento)
+        print(fec_ven_str)
+
+        query: Query = conexion.session.query(Tarea)
+        filtro_tarea: Tarea = query.filter(and_(Tarea.usuarioId == usuario_id, Tarea.estado == EstadoTareaEnum(estado), Tarea.fechaVencimiento == fecha_vencimiento, Tarea.nombre.like(nombre_str))).all()
+
+        print(filtro_tarea)
+
+        dto = TareaDto()
+
+        data = dto.dump(filtro_tarea, many=True)
+
+        return{
+            'content': data
+        }
+        
+        # return{
+        #     "nombre": nombre,
+        #     "estado": estado,
+        #     "fecha_vencimiento": fecha_vencimiento
+        # }
