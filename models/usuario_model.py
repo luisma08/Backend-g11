@@ -12,6 +12,6 @@ class Usuario(conexion.Model):
     apellido = Column( type_=types.Text)
     correo = Column(type_= types.Text, unique=True, nullable=False)
     password = Column(type_=types.Text, nullable=False)
-    tipo = Column(type_=types.Enum(), default=TipoUsuario.PERSONA)
+    tipo = Column(type_=types.Enum(TipoUsuario), default=TipoUsuario.PERSONA)
 
     __tablename__ = 'usuarios'
