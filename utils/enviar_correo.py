@@ -1,7 +1,7 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from smtplib import SMTP
+from smtplib import SMTP, SMTP_SSL
 from os import environ, getcwd, path
 
 def enviar_correo(destinatario, titulo, cuerpo):
@@ -398,6 +398,7 @@ def enviar_correo_adjuntos(destinatarios, titulo):
     password_email_emisor = environ.get('PASSWORD_SENDER')
 
     mensaje['Subject'] = titulo
+    mensaje['From'] = email_emisor
 
     mensaje.attach(MIMEText(cuerpo))
     # getcwd > nos devuelve la ruta en la cual esta nuestro archivo principal del proyecto en el servidor (app.py)
@@ -413,9 +414,9 @@ def enviar_correo_adjuntos(destinatarios, titulo):
     archivo['Content-Disposition'] = 'attachment; filename="lapiceros.jpg"'
     mensaje.attach(archivo)
 
-    emisor = SMTP('smtp.mavoagenciadigital.com', 587)
+    emisor = SMTP_SSL('mail.mavoagenciadigital.com')
 
-    emisor.starttls()
+    #emisor.starttls()
 
     emisor.login(user= email_emisor, password= password_email_emisor)
 
