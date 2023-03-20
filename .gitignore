@@ -4,3 +4,4 @@ __pycache__/
 imagenes/*
 # Si quremos no ignorar o ignorar
 !imagenes/not_found.png
+!imagenes-producto/not_found.png
