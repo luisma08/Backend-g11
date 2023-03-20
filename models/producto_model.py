@@ -1,5 +1,6 @@
 from sqlalchemy import Column, types
 from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.orm import relationship
 from db import conexion
 from datetime import datetime
 
@@ -11,5 +12,7 @@ class Producto(conexion.Model):
     categoriaId = Column(ForeignKey(column='categorias.id'), type_=types.Integer, nullable=False, name='categoria_id')
 
     created_at = Column(type_=types.DateTime, default=datetime.utcnow, name='createdAt')
+
+    categoria = relationship('Categoria', backref = 'productos')
 
     __tablename__ = 'productos'
