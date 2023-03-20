@@ -4,6 +4,8 @@ from werkzeug.utils import secure_filename
 from os import path
 # universal unique indentifier
 from uuid import uuid4
+from dtos.categoria_dto import CategoriaDto
+from models.categoria_model import Categoria
 
 class ImagenesController(Resource):
     def post(self):
@@ -23,3 +25,13 @@ class ImagenesController(Resource):
             return send_file(path.join('imagenes', nombre))
         except FileNotFoundError as error:
             return send_file(path.join('imagenes', 'not_found.jpg'))
+        
+class CategoriasController(Resource):
+    def post(self):
+        data = request.form
+        # Vamos a recibir la imagen mediante la llave llamada imagen
+        imagen = request.files.get('imagen')
+        pass
+
+    def get(self):
+        pass
