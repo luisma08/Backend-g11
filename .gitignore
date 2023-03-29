@@ -1,7 +1,8 @@
 entorno_flask/
 __pycache__/
-.env
+
 imagenes/*
 # Si quremos no ignorar o ignorar
 !imagenes/not_found.png
 !imagenes-producto/not_found.png
+.env
