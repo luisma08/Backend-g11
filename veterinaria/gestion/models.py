@@ -1,0 +1,52 @@
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+
+class ManejoUsiario(BaseUserManager):
+    def create_superuser(self, correo, nombre, apellido, password, tipoUsuario):
+        # Este metodo se mandara a llamar cuando en la terminal se ponga 'python manage.py createsuperuser'
+        if not correo:
+            raise ValueError('El usuario debe tener un correo')
+        
+        # normalize_email > sirve para llevar todo el correo a minusculas y ademas le quita espacios en blanco y verifica si los caracteres son validos
+        correo_normalizado = self.normalize_email(correo)
+
+        nuevo_usuario = self.model(correo = correo_normalizado, nombre = nombre, apellido = apellido, tipoUsuario = tipoUsuario)
+
+        # Generamos el hash de nuestra password
+        nuevo_usuario.set_password(password)
+        # is_superuser > indica que el usuario tiene la totalidad de privilegios para hacer lo que desee en el panel administrativo
+        nuevo_usuario.is_superuser = True
+        nuevo_usuario.is_staff = True
+
+        nuevo_usuario.save()
+
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
+    id = models.AutoField(primary_key=True, unique=True)
+
+    nombre = models.TextField(null=False)
+    apellido = models.TextField(null=False)
+    correo = models.EmailField(max_length=100, unique=True, null=False)
+    password = models.TextField(null=False)
+    tipoUsuario = models.TextField(choices=[('ADMIN', 'ADMIN'), ('CLIENTE', 'CLIENTE')], db_column='tipo_usuario')
+
+    # campos netamente de auth_user
+    # is_staff > sirve para indicar al panel administrativo que el usuario
+    # no pertenece al grupo de usuarios que pueden acceder
+    is_staff = models.BooleanField(default=False)
+    # is_active > sirve para indicar que el usuario est activo y por ende
+    # puede ingresar al panel administrativo
+    is_active = models.BooleanField(default=True)
+
+    # si queremos ingresar al panel administrativo tenemos que indicar que columna usara
+    # para epdir el nombre de usuario
+    USERNAME_FIELD = 'correo'
+
+    # Cuando querramos crear un superusuario por la terminal tendremos que indicar atributos son los que nos debe de solicitar
+    # El correo no va porque ya esta definido en USERNAME_FIELD y si lo volvemos a poner nos dara un error, y el password es ya solicitado de manera automatica
+    REQUIRED_FIELDS = ['nombre', 'apellido']
+
+    
+    objects = ManejoUsiario()
+    class Meta:
+        db_table = 'usuarios'
