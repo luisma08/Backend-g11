@@ -1,8 +1,8 @@
 # from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.request import Request
-from .serializers import RegistroUsuarioSerializer
-from .models import Usuario
+from .serializers import RegistroUsuarioSerializer, MascotaSerializer
+from .models import Usuario, Mascota
 from rest_framework.response import Response
 from rest_framework import status
 # https://www.django-rest-framework.org/api-guide/permissions/
@@ -41,14 +41,37 @@ class PerfilUsuario(APIView):
             'content': ''
         })
     
-class Mascota(APIView):
+class MascotasView(APIView):
     permission_classes = [IsAuthenticated, SoloClientes]
 
-    def post(self, request: Request):
-        foto = request.FILES.get('foto')
-        print(foto)
-        resultado = uploader.upload(foto)
+    def post(self, request:Request):
+        # foto = request.FILES.get('foto')
+        # resultado = uploader.upload(foto)
+        data = {
+            'nombre': request.data.get('nombre'),
+            'sexo': request.data.get('sexo'),
+            'fechaNacimiento': request.data.get('fechaNacimiento'),
+            'alergias': request.data.get('alergias'),
+            'foto': request.FILES.get('foto'),
+            'cliente': request.data.get('cliente')
+        }
+        serializador = MascotaSerializer(data=data)
+        if serializador.is_valid():
+            serializador.save()
+            return Response(data={
+                'message': 'Mascota creada exitosamente',
+                'content': serializador.data
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response(data={
+                'message': 'Error al crear mascota',
+                'content': serializador.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
+    
+    def get(self, request: Request):
+        mascotas = Mascota.object.all()
+        serializador = MascotaSerializer(mascotas, many=True)
+
         return Response(data={
-            'message': 'Mascota creada exitosamente',
-            'content': resultado
-        },status=status.HTTP_201_CREATED)
+            'content': serializador.data
+        }, status=status.HTTP_200_OK)
