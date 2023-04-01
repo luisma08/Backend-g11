@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from os import environ
 from dotenv import load_dotenv
+from cloudinary import config, uploader, api
+from datetime import timedelta
 
 load_dotenv()
 
@@ -42,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'gestion'
+    'gestion',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +136,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # https://docs.djangoproject.com/en/4.1/topics/auth/customizing/#substituting-a-custom-user-model
 AUTH_USER_MODEL = 'gestion.Usuario'
+
+config(
+    cloud_name = environ.get('CLOUDINARY_NAME'),
+    api_key = environ.get('CLOUDINARY_API_KEY'),
+    api_secret = environ.get('CLOUDINARY_API_SECRET'),
+    secure = True
+)
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1, minutes=15)
+}
